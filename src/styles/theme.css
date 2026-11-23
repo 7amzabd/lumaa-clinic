@@ -1,0 +1,89 @@
+/* ==============================================================
+   هوية العيادة: الألوان والخطوط والزوايا
+   --------------------------------------------------------------
+   لتغيير هوية الموقع لعميل جديد عدّل القيم في هذا الملف فقط.
+   كل لون مكتوب بالشكل:  light-dark(لون الوضع الفاتح، لون الوضع الداكن)
+   المكونات تستخدم أسماء مثل bg-canvas و text-ink و text-gold-deep
+   ولا تحتوي على أي لون مكتوب مباشرة.
+   إذا غيّرت الخطوط هنا، غيّر رابط Google Fonts في index.html أيضًا.
+   ============================================================== */
+
+:root {
+  /* الوضع يتبع جهاز الزائر، وزر الوضع في الشريط العلوي يثبّته (انظر ThemeProvider) */
+  color-scheme: light dark;
+
+  /* ── الألوان ──  (فاتح، داكن) */
+  --canvas: light-dark(#f8f1ec, #1b1310); /* خلفية الصفحة: بيج وردي ناعم / بني قهوة داكن */
+  --surface: light-dark(#fffbf8, #241a15); /* خلفية البطاقات والحقول */
+  --sand: light-dark(#f1e4dc, #2b1f19); /* خلفية الأقسام المميزة */
+  --ink: light-dark(#2f221c, #f4e9e0); /* النص الأساسي: حبر بني داكن بدل الأسود */
+  --ink-soft: light-dark(#6b5850, #c4b1a5); /* النص الثانوي */
+  --line: light-dark(#e7d8ce, #3b2c24); /* الحدود والخطوط الفاصلة */
+  --gold: light-dark(#c8a26b, #c9a46c); /* ذهبي شمبانيا للزخارف والخطوط فقط */
+  --gold-deep: light-dark(#7a5828, #e0bf8a); /* ذهبي داكن للنصوص الصغيرة (تباين كافٍ) */
+  --gold-mid: light-dark(#9b7238, #c9a46c); /* ذهبي متوسط، للعناوين الكبيرة فقط */
+  --shine: light-dark(#fff3dc, #fff8ec); /* لون اللمعة التي تمر على كلمة «تلمع» */
+  --blush: light-dark(#ebc3b2, #6e4536); /* وردي ناعم للتوهج خلف العناصر */
+  --primary: light-dark(#2f221c, #d9b67f); /* الزر الأساسي */
+  --primary-hover: light-dark(#4a372d, #e6c793);
+  --on-primary: light-dark(#fbf4ee, #1b1310); /* النص فوق الزر الأساسي */
+  --inverse: light-dark(#2f221c, #120c0a); /* خلفية التذييل والبطاقة المميزة */
+  --on-inverse: light-dark(#f8eee6, #f4e9e0);
+  --on-inverse-soft: light-dark(#cdbab0, #bfac9f);
+  --focus: light-dark(#7a5828, #e0bf8a); /* إطار التركيز عند التنقل بلوحة المفاتيح */
+  --danger: light-dark(#a3362b, #f19a8b); /* رسائل الخطأ */
+  --success: light-dark(#4c6a3c, #a9c98f); /* علامة النجاح */
+  --shadow-soft-color: light-dark(rgb(74 48 34 / 0.35), rgb(0 0 0 / 0.5)); /* الظلال */
+  --shadow-float-color: light-dark(rgb(74 48 34 / 0.4), rgb(0 0 0 / 0.6));
+
+  /* درجات البشرة في دوائر الفريق */
+  --orb-1: light-dark(#fff0e8, #f4d9c9);
+  --orb-2: light-dark(#f3d2c2, #dcae97);
+  --orb-3: light-dark(#e0ad95, #b7826b);
+  --orb-4: light-dark(#c58b73, #7f5243);
+  --on-orb: #3a2820; /* لون الحرف داخل دوائر الفريق (فوق درجات البشرة) */
+
+  /* ── الزوايا ── */
+  --card-radius: 1.75rem;
+  --field-radius: 1rem;
+
+  /* ── الخطوط والأحجام: العربية (اللغة الافتراضية) ── */
+  --brand-font-heading: 'Reem Kufi', 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  --brand-font-body: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  --heading-weight: 500;
+  --heading-tracking: 0; /* لا تضف تباعدًا بين الحروف العربية: يقطع اتصالها */
+  --display-size: clamp(2.6rem, 1.6rem + 4.4vw, 4.6rem);
+  --display-leading: 1.3;
+  --section-size: clamp(1.9rem, 1.45rem + 2vw, 2.9rem);
+  --section-leading: 1.35;
+  --card-size: 1.3rem;
+  --body-leading: 1.85;
+  --eyebrow-size: 0.9rem;
+  --eyebrow-tracking: 0;
+  --eyebrow-transform: none;
+}
+
+/* ── تثبيت الوضع يدويًا من زر الشريط العلوي (يُحفظ في المتصفح) ── */
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+/* ── الخطوط والأحجام: الإنجليزية ── */
+html[lang='en'] {
+  --brand-font-heading: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --brand-font-body: 'Manrope', system-ui, sans-serif;
+  --heading-weight: 500;
+  --heading-tracking: -0.01em;
+  --display-size: clamp(3rem, 1.75rem + 5.4vw, 5.75rem);
+  --display-leading: 1.04;
+  --section-size: clamp(2.25rem, 1.65rem + 2.7vw, 3.6rem);
+  --section-leading: 1.08;
+  --card-size: 1.7rem;
+  --body-leading: 1.7;
+  --eyebrow-size: 0.75rem;
+  --eyebrow-tracking: 0.2em;
+  --eyebrow-transform: uppercase;
+}

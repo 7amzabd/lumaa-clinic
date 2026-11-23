@@ -1,0 +1,247 @@
+/* ==============================================================
+   الأنماط العامة: Tailwind + ربط متغيرات الهوية + أنماط مشتركة
+   لتغيير الألوان والخطوط لا تعدّل هنا، بل في theme.css
+   ============================================================== */
+@import 'tailwindcss';
+@import './theme.css';
+
+/* نحذف ألوان Tailwind الافتراضية، حتى نستخدم ألوان الهوية فقط */
+@theme {
+  --color-*: initial;
+  --ease-lux: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* وميض ذهبي حول حقل الخدمة عند اختيارها من بطاقة الخدمات */
+  --animate-ring-pulse: ring-pulse 1.4s var(--ease-lux) 0.6s both;
+
+  @keyframes ring-pulse {
+    0% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold) 0%, transparent);
+    }
+    35% {
+      box-shadow: 0 0 0 6px color-mix(in srgb, var(--gold) 45%, transparent);
+    }
+    100% {
+      box-shadow: 0 0 0 12px color-mix(in srgb, var(--gold) 0%, transparent);
+    }
+  }
+}
+
+/* ربط متغيرات theme.css بأسماء Tailwind: bg-canvas, text-ink, font-heading ... */
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-sand: var(--sand);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-gold-mid: var(--gold-mid);
+  --color-shine: var(--shine);
+  --color-blush: var(--blush);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  --color-inverse: var(--inverse);
+  --color-on-inverse: var(--on-inverse);
+  --color-on-inverse-soft: var(--on-inverse-soft);
+  --color-focus: var(--focus);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-on-orb: var(--on-orb);
+
+  --font-heading: var(--brand-font-heading);
+  --font-body: var(--brand-font-body);
+  --default-font-family: var(--brand-font-body);
+
+  --radius-card: var(--card-radius);
+  --radius-field: var(--field-radius);
+
+  --shadow-soft: 0 18px 40px -24px var(--shadow-soft-color);
+  --shadow-float: 0 24px 50px -22px var(--shadow-float-color);
+}
+
+@layer base {
+  html {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    line-height: var(--body-leading);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100dvh;
+    overflow-x: clip; /* حماية إضافية من التمرير الأفقي */
+    /* ملمس ورقي خفيف جدًا يعطي إحساسًا فاخرًا */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .3 0 0 0 0 .22 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
+  }
+
+  /* التمرير الناعم فقط لمن لم يطلب تقليل الحركة */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  /* مسافة أعلى الأقسام حتى لا يغطيها الشريط العلوي الثابت */
+  [id] {
+    scroll-margin-top: 5.5rem;
+  }
+
+  /* إطار تركيز واضح عند التنقل بلوحة المفاتيح */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-gold) 35%, transparent);
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  /* أرقام بنفس ارتفاع الحروف في خطوط العناوين (خط Cormorant يصغّرها افتراضيًا) */
+  :where(.font-heading, .heading-display, .heading-section, .heading-card) {
+    font-variant-numeric: lining-nums;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+}
+
+/* حاوية الصفحة: عرض أقصى ومسافة جانبية 20px في الجوال */
+@utility container-page {
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 2rem;
+  }
+}
+
+/* أحجام العناوين تتغير تلقائيًا حسب اللغة (انظر theme.css) */
+@utility heading-display {
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight);
+  font-size: var(--display-size);
+  line-height: var(--display-leading);
+  letter-spacing: var(--heading-tracking);
+}
+
+@utility heading-section {
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight);
+  font-size: var(--section-size);
+  line-height: var(--section-leading);
+  letter-spacing: var(--heading-tracking);
+}
+
+@utility heading-card {
+  font-family: var(--font-heading);
+  font-weight: var(--heading-weight);
+  font-size: var(--card-size);
+  line-height: 1.35;
+  letter-spacing: var(--heading-tracking);
+}
+
+/* السطر الصغير فوق عناوين الأقسام، مع خط ذهبي قبله */
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: var(--eyebrow-size);
+  font-weight: 500;
+  letter-spacing: var(--eyebrow-tracking);
+  text-transform: var(--eyebrow-transform);
+  color: var(--color-gold-deep);
+
+  &::before {
+    content: '';
+    width: 2rem;
+    height: 1px;
+    background: var(--color-gold);
+  }
+}
+
+/* لمعة تمر على الزر الأساسي عند تمرير الماوس (تتبع اتجاه اللغة) */
+@utility btn-shine {
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      110deg,
+      transparent 35%,
+      color-mix(in srgb, var(--color-shine) 40%, transparent) 50%,
+      transparent 65%
+    );
+    transform: translateX(-110%);
+  }
+
+  &:dir(rtl)::after {
+    transform: translateX(110%);
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    &:hover::after {
+      transition: transform 0.9s var(--ease-lux);
+      transform: translateX(110%);
+    }
+
+    &:dir(rtl):hover::after {
+      transform: translateX(-110%);
+    }
+  }
+}
+
+/*
+  كلمة «تلمع»: نص ذهبي متدرج، وفي منتصف الخلفية شريط فاتح (اللمعة).
+  مكوّن ShineText يحرّك موضع الخلفية مرة واحدة فيمر الشريط على الكلمة.
+*/
+@utility text-shine {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-gold-deep) 0%,
+    var(--color-gold-mid) 18%,
+    var(--color-gold-deep) 36%,
+    var(--color-shine) 50%,
+    var(--color-gold-deep) 64%,
+    var(--color-gold-mid) 82%,
+    var(--color-gold-deep) 100%
+  );
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  /* مساحة إضافية حتى لا تُقص أطراف الحروف العالية */
+  padding: 0.14em 0.1em;
+  margin: -0.14em -0.1em;
+}
+
+/* رابط «تخطَّ إلى المحتوى»: مخفي حتى يصل إليه مستخدم لوحة المفاتيح */
+@utility skip-link {
+  position: fixed;
+  inset-inline-start: 1rem;
+  top: 1rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  transform: translateY(-200%);
+
+  &:focus {
+    transform: none;
+  }
+}
