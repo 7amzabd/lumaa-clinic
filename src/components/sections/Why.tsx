@@ -58,7 +58,7 @@ function WhyCard({ item, large }: { item: WhyItem; large: boolean }) {
           {[1, 0.75, 0.9, 0.55].map((width, index) => (
             <m.span
               key={index}
-              className="block h-1.5 origin-[inline-start] rounded-full bg-gold/60"
+              className="block h-1.5 origin-left rounded-full bg-gold/60 rtl:origin-right"
               style={{ width: `${width * 100}%` }}
               initial={{ scaleX: 0 }}
               whileInView={{ scaleX: 1 }}

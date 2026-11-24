@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import { Footer } from './components/layout/Footer'
 import { Header } from './components/layout/Header'
+import { FloatingWhatsapp } from './components/layout/FloatingWhatsapp'
 import { MobileBookingBar } from './components/layout/MobileBookingBar'
 import { Booking } from './components/sections/Booking'
 import { Faq } from './components/sections/Faq'
@@ -48,6 +49,7 @@ export default function App() {
       </main>
       <Footer />
       <MobileBookingBar />
+      <FloatingWhatsapp />
     </IntroContext.Provider>
   )
 }

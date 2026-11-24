@@ -1,7 +1,7 @@
 import { site } from '../../content/site'
 import type { Testimonial } from '../../content/types'
 import { useLang } from '../../i18n/useLang'
-import { IconQuote } from '../ui/Icons'
+import { IconQuote, IconStar } from '../ui/Icons'
 import { Marquee } from '../ui/Marquee'
 import { Reveal } from '../ui/Reveal'
 import { SectionHeading } from '../ui/SectionHeading'
@@ -31,7 +31,15 @@ function TestimonialCard({ item }: { item: Testimonial }) {
   const { t } = useLang()
   return (
     <figure className="flex h-full flex-col rounded-card bg-surface p-7 sm:p-8">
-      <IconQuote className="size-8 text-gold rtl:-scale-x-100" />
+      <div className="flex items-center justify-between">
+        <IconQuote className="size-8 text-gold rtl:-scale-x-100" />
+        {/* خمس نجوم، ويقرؤها قارئ الشاشة كجملة واحدة */}
+        <span role="img" aria-label={t(site.ui.ratingLabel)} className="flex gap-0.5 text-gold">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <IconStar key={star} className="size-4" />
+          ))}
+        </span>
+      </div>
       <blockquote className="mt-5 text-[1.05rem] leading-[1.9]">{t(item.quote)}</blockquote>
       <figcaption className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
         <span>

@@ -5,8 +5,9 @@ import { useLang } from '../../i18n/useLang'
 import type { BookingValues } from '../../lib/validation'
 import { whatsappUrl } from '../../lib/whatsapp'
 import { useBooking } from '../../state/useBooking'
-import { BookingForm } from '../booking/BookingForm'
+import { BookingForm, type BookingDraft } from '../booking/BookingForm'
 import { BookingSuccess } from '../booking/BookingSuccess'
+import { BookingSummary } from '../booking/BookingSummary'
 import { IconClock, IconMapPin, IconSparkle, IconWhatsapp } from '../ui/Icons'
 import { Reveal } from '../ui/Reveal'
 import { SectionHeading } from '../ui/SectionHeading'
@@ -21,6 +22,8 @@ export function Booking() {
   const { t } = useLang()
   const { setServiceId } = useBooking()
   const [submission, setSubmission] = useState<Submission | null>(null)
+  // الموعد المختار حتى الآن (يرسله النموذج)، لبطاقة «ملخص حجزك»
+  const [draft, setDraft] = useState<BookingDraft>({ date: '', time: '' })
   const { booking, brand } = site
 
   const reset = () => {
@@ -30,7 +33,7 @@ export function Booking() {
 
   return (
     <section id="booking" aria-labelledby="booking-title" className="py-20 sm:py-28">
-      <div className="container-page grid gap-6 lg:grid-cols-[1.45fr_0.55fr] lg:gap-8">
+      <div className="container-page grid gap-6 lg:grid-cols-[1.35fr_0.65fr] lg:gap-8">
         <div className="rounded-[2rem] border border-line bg-surface p-6 shadow-soft sm:p-10">
           <SectionHeading id="booking-title" content={booking} focusableTitle />
 
@@ -42,14 +45,19 @@ export function Booking() {
               </m.div>
             ) : (
               <m.div key="form" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                <BookingForm onSubmitted={(values, whatsappLink) => setSubmission({ values, whatsappLink })} />
+                <BookingForm
+                  onDraftChange={setDraft}
+                  onSubmitted={(values, whatsappLink) => setSubmission({ values, whatsappLink })}
+                />
               </m.div>
             )}
           </AnimatePresence>
         </div>
 
-        {/* بطاقة المعلومات بجانب النموذج */}
-        <aside className="flex flex-col gap-4">
+        {/* بجانب النموذج: ملخص الحجز الحي، ثم معلومات العيادة. يبقى ظاهرًا أثناء التمرير على الشاشات الكبيرة */}
+        <aside className="flex flex-col gap-4 lg:sticky lg:top-28 lg:self-start">
+          {!submission && <BookingSummary draft={draft} />}
+
           <Reveal delay={0.1} className="rounded-[2rem] bg-inverse p-7 text-on-inverse sm:p-8">
             <InfoRow icon={<IconClock />} label={t(booking.info.hoursLabel)}>
               <p>{t(booking.info.days)}</p>

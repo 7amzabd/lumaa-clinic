@@ -8,6 +8,9 @@
 /* نحذف ألوان Tailwind الافتراضية، حتى نستخدم ألوان الهوية فقط */
 @theme {
   --color-*: initial;
+  /* أبيض وأسود ثابتان، للنصوص والشارات فوق الصور فقط */
+  --color-white: #fff;
+  --color-black: #140c09;
   --ease-lux: cubic-bezier(0.22, 1, 0.36, 1);
 
   /* وميض ذهبي حول حقل الخدمة عند اختيارها من بطاقة الخدمات */
@@ -75,6 +78,14 @@
     overflow-x: clip; /* حماية إضافية من التمرير الأفقي */
     /* ملمس ورقي خفيف جدًا يعطي إحساسًا فاخرًا */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .3 0 0 0 0 .22 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
+  }
+
+  /* نحجز مكان شريط التمرير دائمًا، ونوقف تمرير الصفحة ما دامت نافذة التفاصيل مفتوحة */
+  html {
+    scrollbar-gutter: stable;
+  }
+  html:has(dialog[open]) {
+    overflow: hidden;
   }
 
   /* التمرير الناعم فقط لمن لم يطلب تقليل الحركة */
@@ -227,6 +238,72 @@
   /* مساحة إضافية حتى لا تُقص أطراف الحروف العالية */
   padding: 0.14em 0.1em;
   margin: -0.14em -0.1em;
+}
+
+/*
+  نافذة تفاصيل الخدمة (عنصر <dialog>):
+  في الجوال ورقة تصعد من أسفل الشاشة، ومن md فأكبر نافذة في الوسط.
+*/
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes sheet-pop {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@utility sheet {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: 100%;
+  max-height: 92dvh;
+  margin: auto 0 0; /* ملتصقة بأسفل الشاشة */
+  padding: 0;
+  border: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 2rem 2rem 0 0;
+  background: var(--color-surface);
+  color: var(--color-ink);
+  box-shadow: 0 -20px 60px -20px var(--shadow-float-color);
+
+  &::backdrop {
+    background: rgb(20 12 9 / 0.55);
+    backdrop-filter: blur(4px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &[open] {
+      animation: sheet-up 0.5s var(--ease-lux);
+    }
+    &[open]::backdrop {
+      animation: backdrop-in 0.3s ease-out;
+    }
+  }
+
+  @media (width >= 48rem) {
+    width: min(58rem, calc(100% - 3rem));
+    max-height: min(46rem, 90dvh);
+    margin: auto; /* في وسط الشاشة */
+    border-radius: 2rem;
+    box-shadow: 0 30px 80px -30px var(--shadow-float-color);
+  }
+
+  @media (width >= 48rem) and (prefers-reduced-motion: no-preference) {
+    &[open] {
+      animation: sheet-pop 0.45s var(--ease-lux);
+    }
+  }
 }
 
 /* رابط «تخطَّ إلى المحتوى»: مخفي حتى يصل إليه مستخدم لوحة المفاتيح */

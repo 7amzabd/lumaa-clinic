@@ -35,6 +35,9 @@
     <meta name="theme-color" content="#1b1310" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="light dark" />
 
+    <!-- صورة الصفحة الرئيسية تُحمَّل مبكرًا لأنها أكبر عنصر يظهر أولًا -->
+    <link rel="preload" as="image" href="/face.webp" type="image/webp" fetchpriority="high" />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 

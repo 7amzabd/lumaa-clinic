@@ -5,19 +5,25 @@ import { useLang } from '../../i18n/useLang'
 import { formatPrice } from '../../lib/format'
 import { useBooking } from '../../state/useBooking'
 import { IconArrow, IconClock, IconLeaf } from '../ui/Icons'
+import { Photo } from '../ui/Photo'
 import { Reveal } from '../ui/Reveal'
 import { SectionHeading } from '../ui/SectionHeading'
+import { ServiceDialog } from '../ui/ServiceDialog'
 import { TiltCard } from '../ui/TiltCard'
 
 /**
- * قسم الخدمات: ست بطاقات تميل مع الماوس على سطح المكتب،
+ * قسم الخدمات: بطاقات بصور تميل مع الماوس على سطح المكتب،
  * وفي الجوال تصبح شريطًا ينزلق بالإصبع مع نقاط تنقّل.
+ * الضغط على البطاقة يفتح نافذة التفاصيل، وزر «احجز» يختار الخدمة في نموذج الحجز.
  */
 export function Services() {
   const { t } = useLang()
+  const { goToBooking } = useBooking()
   const { items } = site.services
   const trackRef = useRef<HTMLUListElement>(null)
   const [current, setCurrent] = useState(0)
+  // الخدمة المفتوحة في نافذة التفاصيل (null = مغلقة)
+  const [openService, setOpenService] = useState<Service | null>(null)
 
   // في الجوال: نعرف البطاقة الظاهرة من موضع التمرير لتمييز نقطتها
   useEffect(() => {
@@ -59,16 +65,16 @@ export function Services() {
           {items.map((service, index) => (
             <li key={service.id} className="w-[84%] shrink-0 snap-center sm:w-auto">
               <Reveal delay={(index % 3) * 0.08} className="h-full">
-                <TiltCard>
-                  <ServiceCard service={service} number={index + 1} />
+                <TiltCard max={5}>
+                  <ServiceCard service={service} eager={index === 0} onOpen={() => setOpenService(service)} />
                 </TiltCard>
               </Reveal>
             </li>
           ))}
         </ul>
 
-        {/* نقاط التنقل: الجوال فقط */}
-        <div className="mt-2 flex justify-center gap-2 sm:hidden" role="tablist" aria-label={t(site.services.eyebrow)}>
+        {/* نقاط التنقل: الجوال فقط (مساحة اللمس أكبر من النقطة الظاهرة) */}
+        <div className="mt-1 flex justify-center sm:hidden" role="tablist" aria-label={t(site.services.eyebrow)}>
           {items.map((service, index) => (
             <button
               key={service.id}
@@ -77,18 +83,31 @@ export function Services() {
               aria-selected={index === current}
               aria-label={t(service.name)}
               onClick={() => scrollTo(index)}
-              className={`h-2 rounded-full transition-[width,background-color] duration-400 ease-lux ${
-                index === current ? 'w-7 bg-gold-deep' : 'w-2 bg-line'
-              }`}
-            />
+              className="grid h-8 place-items-center px-1"
+            >
+              <span
+                className={`block h-2 rounded-full transition-[width,background-color] duration-400 ease-lux ${
+                  index === current ? 'w-7 bg-gold-deep' : 'w-2 bg-line'
+                }`}
+              />
+            </button>
           ))}
         </div>
       </div>
+
+      <ServiceDialog service={openService} onClose={() => setOpenService(null)} onBook={(id) => goToBooking(id)} />
     </section>
   )
 }
 
-function ServiceCard({ service, number }: { service: Service; number: number }) {
+interface ServiceCardProps {
+  service: Service
+  /** الصورة الأولى تُحمَّل فورًا، والباقي عند الاقتراب منها */
+  eager: boolean
+  onOpen: () => void
+}
+
+function ServiceCard({ service, eager, onOpen }: ServiceCardProps) {
   const { t, lang } = useLang()
   const { goToBooking } = useBooking()
   const { services } = site
@@ -99,68 +118,80 @@ function ServiceCard({ service, number }: { service: Service; number: number }) 
     ? {
         card: 'border-gold/25 bg-inverse text-on-inverse',
         soft: 'text-on-inverse-soft',
-        number: 'text-gold',
-        line: 'border-on-inverse/15',
+        link: 'text-gold',
         button: 'bg-on-inverse text-inverse hover:bg-gold',
       }
     : {
         card: 'border-line bg-surface hover:border-gold/60',
         soft: 'text-ink-soft',
-        number: 'text-gold-deep',
-        line: 'border-line',
-        button: 'border border-ink/15 hover:border-primary hover:bg-primary hover:text-on-primary',
+        link: 'text-gold-deep',
+        button: 'bg-primary text-on-primary hover:bg-primary-hover',
       }
 
   return (
     <article
-      className={`group flex h-full flex-col rounded-card border p-6 transition-[border-color,box-shadow] duration-500 ease-lux hover:shadow-float sm:p-7 ${tone.card}`}
+      className={`group relative flex h-full flex-col overflow-hidden rounded-card border transition-[border-color,box-shadow] duration-500 ease-lux hover:shadow-float ${tone.card}`}
     >
-      <div className="flex items-center justify-between gap-3">
-        <span className={`font-heading text-lg ${tone.number}`} aria-hidden="true">
-          {String(number).padStart(2, '0')}
-        </span>
+      {/* الصورة مع تكبير ناعم عند تمرير الماوس */}
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <Photo
+          src={service.image}
+          alt={t(service.imageAlt)}
+          eager={eager}
+          className="size-full object-cover transition-transform duration-[1400ms] ease-lux motion-safe:group-hover:scale-[1.06]"
+        />
+        {/* تدرج داكن أسفل الصورة حتى تُقرأ الشارات فوقها */}
+        <div aria-hidden="true" className="absolute inset-0 bg-linear-to-t from-black/55 via-black/5 to-transparent" />
         {featured && (
-          <span className="rounded-full border border-gold/50 px-3 py-1 text-xs text-gold">{t(services.featuredBadge)}</span>
+          <span className="absolute top-4 start-4 rounded-full bg-gold px-3 py-1 text-xs font-medium text-on-orb">
+            {t(services.featuredBadge)}
+          </span>
         )}
+        <ul className="absolute inset-x-4 bottom-3.5 flex flex-wrap gap-2 text-xs font-medium text-white">
+          <li className="inline-flex items-center gap-1.5 rounded-full bg-black/45 px-2.5 py-1 backdrop-blur-sm">
+            <IconClock className="size-3.5" />
+            <span className="sr-only">{t(services.durationLabel)}: </span>
+            {t(service.duration)}
+          </li>
+          <li className="inline-flex items-center gap-1.5 rounded-full bg-black/45 px-2.5 py-1 backdrop-blur-sm">
+            <IconLeaf className="size-3.5" />
+            <span className="sr-only">{t(services.recoveryLabel)}: </span>
+            {t(service.recovery)}
+          </li>
+        </ul>
       </div>
 
-      <h3 className="heading-card mt-6">{t(service.name)}</h3>
-      <p className={`mt-3 ${tone.soft}`}>{t(service.description)}</p>
+      <div className="flex flex-1 flex-col p-6">
+        <h3 className="heading-card">
+          {/* after:inset-0 يمدّ مساحة الضغط على البطاقة كلها، فتفتح التفاصيل من أي مكان فيها */}
+          <button type="button" onClick={onOpen} aria-haspopup="dialog" className="text-start after:absolute after:inset-0">
+            {t(service.name)}
+          </button>
+        </h3>
+        <p className={`mt-2 line-clamp-2 ${tone.soft}`}>{t(service.description)}</p>
 
-      {/* المدة وفترة التعافي */}
-      <dl className={`mt-6 grid grid-cols-2 gap-4 border-t pt-5 text-sm ${tone.line}`}>
-        <div>
-          <dt className={`flex items-center gap-1.5 ${tone.soft}`}>
-            <IconClock className="size-4 text-gold" />
-            {t(services.durationLabel)}
-          </dt>
-          <dd className="mt-1 font-medium">{t(service.duration)}</dd>
+        <div className="mt-auto flex items-end justify-between gap-3 pt-6">
+          <p>
+            <span className={`block text-xs ${tone.soft}`}>{t(services.priceFromLabel)}</span>
+            <span className="font-heading text-2xl leading-tight">{formatPrice(service.priceFrom, lang)}</span>
+          </p>
+          <div className="flex items-center gap-3">
+            {/* تلميح بصري فقط: الضغط على البطاقة نفسها يفتح التفاصيل */}
+            <span aria-hidden="true" className={`text-sm underline-offset-4 group-hover:underline ${tone.link}`}>
+              {t(services.detailsLabel)}
+            </span>
+            <button
+              type="button"
+              onClick={() => goToBooking(service.id)}
+              className={`relative z-10 inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-5 text-sm font-medium transition-colors duration-300 ${tone.button}`}
+            >
+              {t(services.bookLabel)}
+              {/* اسم الخدمة لقارئ الشاشة، حتى لا تكون كل الأزرار «احجز» فقط */}
+              <span className="sr-only">{t(service.name)}</span>
+              <IconArrow className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
+            </button>
+          </div>
         </div>
-        <div>
-          <dt className={`flex items-center gap-1.5 ${tone.soft}`}>
-            <IconLeaf className="size-4 text-gold" />
-            {t(services.recoveryLabel)}
-          </dt>
-          <dd className="mt-1 font-medium">{t(service.recovery)}</dd>
-        </div>
-      </dl>
-
-      {/* السعر وزر الحجز */}
-      <div className="mt-auto flex items-end justify-between gap-4 pt-7">
-        <p>
-          <span className={`block text-xs ${tone.soft}`}>{t(services.priceFromLabel)}</span>
-          <span className="font-heading text-2xl leading-tight">{formatPrice(service.priceFrom, lang)}</span>
-        </p>
-        <button
-          type="button"
-          onClick={() => goToBooking(service.id)}
-          className={`relative z-10 inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-5 text-sm font-medium transition-colors duration-300 ${tone.button}`}
-        >
-          {t(services.bookLabel)}
-          {/* اسم الخدمة لقارئ الشاشة، حتى لا تكون كل الأزرار «احجز» فقط */}
-          <span className="sr-only">{t(service.name)}</span>
-          <IconArrow className="size-4 transition-transform duration-300 group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
-        </button>
       </div>
     </article>
   )

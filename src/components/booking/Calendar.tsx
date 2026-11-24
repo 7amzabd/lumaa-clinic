@@ -45,7 +45,14 @@ export function Calendar({ value, onChange, id, describedBy, invalid }: Calendar
   )
 
   // أسماء أيام الأسبوع بدءًا من الأحد (نستخدم أسبوعًا مرجعيًا يبدأ بالأحد)
-  const weekdays = useMemo(() => Array.from({ length: 7 }, (_, i) => dayFormatter.format(new Date(2023, 0, 1 + i))), [dayFormatter])
+  // short للشاشات الواسعة، و narrow (حرف واحد) للجوال حتى لا تتلاصق الأسماء
+  const weekdays = useMemo(() => {
+    const narrowFormatter = new Intl.DateTimeFormat(site.locale[lang], { weekday: 'narrow' })
+    return Array.from({ length: 7 }, (_, i) => {
+      const day = new Date(2023, 0, 1 + i)
+      return { short: dayFormatter.format(day), narrow: narrowFormatter.format(day) }
+    })
+  }, [dayFormatter, lang])
 
   const firstOfMonth = new Date(view.year, view.month, 1)
   const daysInMonth = new Date(view.year, view.month + 1, 0).getDate()
@@ -153,8 +160,9 @@ export function Calendar({ value, onChange, id, describedBy, invalid }: Calendar
       {/* أسماء الأيام */}
       <div className="mt-4 grid grid-cols-7 text-center text-xs text-ink-soft" aria-hidden="true">
         {weekdays.map((day) => (
-          <span key={day} className="py-1">
-            {day}
+          <span key={day.short} className="py-1">
+            <span className="sm:hidden">{day.narrow}</span>
+            <span className="max-sm:hidden">{day.short}</span>
           </span>
         ))}
       </div>

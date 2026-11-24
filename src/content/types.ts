@@ -59,6 +59,14 @@ export interface Service {
   priceFrom: number
   /** true = بطاقة مميزة عليها شارة «الأكثر طلبًا» */
   featured?: boolean
+  /** مسار الصورة في مجلد public بدون الامتداد (يوجد منها ‎.webp و ‎.jpg بنسبة 4:3) */
+  image: string
+  /** وصف الصورة لقارئ الشاشة */
+  imageAlt: Localized
+  /** ماذا تشمل الجلسة: 3 إلى 5 نقاط قصيرة تظهر في نافذة التفاصيل */
+  includes: Localized[]
+  /** لمن تناسب هذه الخدمة */
+  idealFor: Localized
 }
 
 export type WhyIcon = 'shield' | 'users' | 'document' | 'clock' | 'leaf' | 'sparkle'
@@ -166,6 +174,8 @@ export interface SiteContent {
     previousMonth: Localized
     nextMonth: Localized
     closedDay: Localized
+    whatsappChat: Localized
+    ratingLabel: Localized
     openMenu: Localized
     closeMenu: Localized
     mainNav: Localized
@@ -199,6 +209,11 @@ export interface SiteContent {
     recoveryLabel: Localized
     priceFromLabel: Localized
     bookLabel: Localized
+    detailsLabel: Localized
+    includesTitle: Localized
+    idealForLabel: Localized
+    bookThisLabel: Localized
+    closeLabel: Localized
     items: Service[]
   }
   why: SectionIntro & {
@@ -233,6 +248,14 @@ export interface SiteContent {
     items: Testimonial[]
   }
   booking: SectionIntro & {
+    /** أسماء مراحل النموذج الثلاث في مؤشر التقدم */
+    steps: [Localized, Localized, Localized]
+    stepDone: Localized
+    summary: {
+      title: Localized
+      empty: Localized
+      notChosen: Localized
+    }
     fields: {
       name: FieldText
       phone: FieldText
