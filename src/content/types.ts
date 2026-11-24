@@ -102,8 +102,12 @@ export interface JourneyStep {
 }
 
 export interface TeamMember {
-  /** الحرف الذي يظهر في الدائرة بدل الصورة */
+  /** الحرف الذي يظهر في الدائرة إذا لم توجد صورة */
   initial: Localized
+  /** مسار الصورة المربعة في public بدون الامتداد (‎.webp و ‎.jpg). اختياري */
+  image?: string
+  /** وصف الصورة لقارئ الشاشة */
+  imageAlt?: Localized
   name: Localized
   role: Localized
   experience: Localized

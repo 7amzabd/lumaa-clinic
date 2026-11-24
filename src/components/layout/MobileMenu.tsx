@@ -4,6 +4,8 @@ import { site } from '../../content/site'
 import { useLang } from '../../i18n/useLang'
 import { LinkButton } from '../ui/Button'
 import { IconArrow } from '../ui/Icons'
+import { ThemeToggle } from '../ui/ThemeToggle'
+import { useTheme } from '../../theme/ThemeContext'
 
 interface MobileMenuProps {
   open: boolean
@@ -16,6 +18,7 @@ interface MobileMenuProps {
 /** قائمة الروابط المختصرة في الجوال، تنزل أسفل الشريط العلوي */
 export function MobileMenu({ open, active, onClose, menuButtonRef }: MobileMenuProps) {
   const { t } = useLang()
+  const { theme } = useTheme()
   const firstLinkRef = useRef<HTMLAnchorElement>(null)
 
   useEffect(() => {
@@ -83,6 +86,13 @@ export function MobileMenu({ open, active, onClose, menuButtonRef }: MobileMenuP
               <LinkButton href="#booking" onClick={onClose} size="lg" className="mt-6 w-full">
                 {t(site.ui.bookNow)}
               </LinkButton>
+              {/* زر الوضع الفاتح/الداكن: يظهر هنا في الجوال فقط (على الشاشات الأوسع مكانه الشريط العلوي) */}
+              <div className="mt-5 flex items-center justify-between sm:hidden">
+                <span aria-hidden="true" className="text-sm text-ink-soft">
+                  {t(theme === 'dark' ? site.ui.switchToLight : site.ui.switchToDark)}
+                </span>
+                <ThemeToggle />
+              </div>
             </nav>
           </m.div>
         </>

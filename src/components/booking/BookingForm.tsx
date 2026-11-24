@@ -126,7 +126,12 @@ export function BookingForm({ onSubmitted, onDraftChange }: BookingFormProps) {
               >
                 {done ? <IconCheck className="size-3.5" /> : index + 1}
               </span>
-              <span className={`text-xs whitespace-nowrap sm:text-sm ${done || isCurrent ? 'font-medium' : 'text-ink-soft'}`}>
+              {/* في الجوال يظهر اسم المرحلة الحالية فقط، حتى لا يضيق السطر (الباقي يبقى لقارئ الشاشة) */}
+              <span
+                className={`text-xs whitespace-nowrap sm:text-sm ${done || isCurrent ? 'font-medium' : 'text-ink-soft'} ${
+                  isCurrent ? '' : 'max-sm:sr-only'
+                }`}
+              >
                 {t(step)}
                 {done && <span className="sr-only"> ({t(booking.stepDone)})</span>}
               </span>

@@ -15,12 +15,12 @@ export const site: SiteContent = {
     siteUrl: 'https://lumaa-clinic.vercel.app', // غيّره إلى رابط موقعك بعد النشر (بدون / في النهاية)
     noIndex: true, // true = لا تظهر الصفحة في نتائج البحث (مناسب لعيادة وهمية). اجعلها false لعيادة حقيقية
     title: {
-      ar: 'لُمعة | عيادة عناية بالبشرة في جدة',
-      en: 'Lumaa | Skin Care Clinic in Jeddah',
+      ar: 'نموذج موقع لعيادة بشرة | تصميم حمزة بدر',
+      en: 'Skin Clinic Website Template | Designed by Hamza Bder',
     },
     description: {
-      ar: 'لُمعة عيادة عناية بالبشرة في جدة: هيدرافيشل، تقشير كيميائي، علاج حب الشباب والتصبغات، وخطة واضحة قبل أي التزام. احجز استشارتك المجانية.',
-      en: 'Lumaa is a skin care clinic in Jeddah: HydraFacial, chemical peels, acne and pigmentation treatments, with a clear plan before any commitment. Book your free consultation.',
+      ar: 'نموذج تجريبي يعرض الخدمات والأسعار والحجز عبر واتساب. اطلب نسخة باسم عيادتك.',
+      en: 'A demo template showing services, prices and WhatsApp booking. Request a version with your clinic name.',
     },
     ogImageAlt: {
       ar: 'شعار لُمعة مع عبارة: بشرتك تستحق أن تلمع',
@@ -418,9 +418,12 @@ export const site: SiteContent = {
       ar: 'فريق نسائي بالكامل، بخبرة مجتمعة تتجاوز 25 سنة.',
       en: 'An all-female team with more than 25 years of combined experience.',
     },
+    // صورة كل عضو مربعة (يكفي 600×600) في public/team بصيغتي ‎.webp و ‎.jpg. احذف image ليظهر الحرف الأول بدلها
     members: [
       {
         initial: { ar: 'ر', en: 'R' },
+        image: '/team/reem',
+        imageAlt: { ar: 'صورة د. ريم العتيبي', en: 'Portrait of Dr. Reem Al-Otaibi' },
         name: { ar: 'د. ريم العتيبي', en: 'Dr. Reem Al-Otaibi' },
         role: { ar: 'استشارية جلدية', en: 'Consultant dermatologist' },
         experience: { ar: '12 سنة خبرة', en: '12 years of experience' },
@@ -428,6 +431,8 @@ export const site: SiteContent = {
       },
       {
         initial: { ar: 'ن', en: 'N' },
+        image: '/team/noura',
+        imageAlt: { ar: 'صورة د. نورة الحربي', en: 'Portrait of Dr. Noura Al-Harbi' },
         name: { ar: 'د. نورة الحربي', en: 'Dr. Noura Al-Harbi' },
         role: { ar: 'أخصائية ليزر وتصبغات', en: 'Laser & pigmentation specialist' },
         experience: { ar: '8 سنوات خبرة', en: '8 years of experience' },
@@ -435,6 +440,8 @@ export const site: SiteContent = {
       },
       {
         initial: { ar: 'ل', en: 'L' },
+        image: '/team/lina',
+        imageAlt: { ar: 'صورة لينا حداد', en: 'Portrait of Lina Haddad' },
         name: { ar: 'لينا حداد', en: 'Lina Haddad' },
         role: { ar: 'أخصائية عناية بالبشرة', en: 'Skin care specialist' },
         experience: { ar: '6 سنوات خبرة', en: '6 years of experience' },

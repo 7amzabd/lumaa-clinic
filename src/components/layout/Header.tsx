@@ -78,9 +78,12 @@ export function Header() {
             <span className="sr-only">{t(site.ui.switchLanguage)}</span>
           </button>
 
-          <ThemeToggle />
+          {/* في الجوال ينتقل زر الوضع إلى داخل القائمة، حتى يتسع الشريط للأزرار الأساسية */}
+          <div className="max-sm:hidden">
+            <ThemeToggle />
+          </div>
 
-          <LinkButton href="#booking" className="max-sm:h-10 max-sm:px-4">
+          <LinkButton href="#booking" className="max-sm:h-10 max-sm:px-3.5">
             {t(site.ui.bookNow)}
           </LinkButton>
 
