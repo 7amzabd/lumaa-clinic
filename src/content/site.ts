@@ -536,6 +536,10 @@ export const site: SiteContent = {
     timeSlots: ['11:00', '13:00', '16:00', '18:00', '20:00'],
     closedDays: [5], // الجمعة
     submit: { ar: 'أرسل الحجز عبر واتساب', en: 'Send booking on WhatsApp' },
+    privacyNote: {
+      ar: 'نحفظ بيانات الحجز لتأكيد موعدك فقط، ولا نشاركها مع أحد.',
+      en: 'We keep your booking details only to confirm your visit, and never share them.',
+    },
     errorSummary: {
       ar: 'تحقق من الحقول المعلّمة باللون الأحمر.',
       en: 'Please check the fields marked in red.',
@@ -657,5 +661,106 @@ export const site: SiteContent = {
     creditHandle: '@hamza.bder.dev',
     creditHref: 'https://www.instagram.com/hamza.bder.dev/',
     rights: { ar: '© {year} لُمعة. جميع الحقوق محفوظة.', en: '© {year} Lumaa. All rights reserved.' },
+  },
+
+  // ─── 10) لوحة الإدارة: صفحة ‎/admin (تعمل بعد ربط Firebase، انظر README) ───
+  admin: {
+    pageTitle: { ar: 'لوحة الإدارة | لُمعة', en: 'Admin | Lumaa' },
+    title: { ar: 'لوحة الإدارة', en: 'Admin' },
+    bookingsTitle: { ar: 'الحجوزات', en: 'Bookings' },
+    backToSite: { ar: 'عرض الموقع', en: 'View site' },
+    signOut: { ar: 'تسجيل الخروج', en: 'Sign out' },
+    loading: { ar: 'جارٍ التحميل…', en: 'Loading…' },
+    notConfigured: {
+      title: { ar: 'لوحة الإدارة غير مفعّلة بعد', en: 'The admin panel is not set up yet' },
+      text: {
+        ar: 'اربط الموقع بمشروع Firebase أولًا. الخطوات في ملف README تحت عنوان «لوحة الإدارة».',
+        en: 'Connect the site to a Firebase project first. The steps are in the README under “Admin panel”.',
+      },
+    },
+    login: {
+      title: { ar: 'دخول الإدارة', en: 'Admin sign-in' },
+      intro: { ar: 'هذه الصفحة لفريق العيادة فقط.', en: 'This page is for clinic staff only.' },
+      email: { ar: 'البريد الإلكتروني', en: 'Email' },
+      password: { ar: 'كلمة المرور', en: 'Password' },
+      submit: { ar: 'دخول', en: 'Sign in' },
+      submitting: { ar: 'جارٍ الدخول…', en: 'Signing in…' },
+      errors: {
+        empty: { ar: 'اكتب البريد وكلمة المرور.', en: 'Enter your email and password.' },
+        wrong: { ar: 'البريد أو كلمة المرور غير صحيحة.', en: 'Incorrect email or password.' },
+        tooMany: {
+          ar: 'محاولات كثيرة. انتظر قليلًا ثم حاول مجددًا.',
+          en: 'Too many attempts. Wait a moment and try again.',
+        },
+        network: {
+          ar: 'تعذّر الاتصال. تحقق من الإنترنت وحاول مجددًا.',
+          en: 'Could not connect. Check your internet and try again.',
+        },
+        unknown: { ar: 'تعذّر الدخول. حاول مجددًا.', en: 'Could not sign in. Please try again.' },
+      },
+    },
+    notAllowed: {
+      title: { ar: 'هذا الحساب ليس مديرًا', en: 'This account is not an admin' },
+      text: {
+        ar: 'في Firestore أنشئ مستندًا داخل مجموعة admins، واجعل معرّفه (Document ID) المعرّف التالي، ثم حدّث الصفحة.',
+        en: 'In Firestore, create a document in the admins collection with the ID below as its Document ID, then refresh this page.',
+      },
+      uidLabel: { ar: 'معرّف الحساب (UID)', en: 'Account ID (UID)' },
+    },
+    stats: {
+      today: { ar: 'مواعيد اليوم', en: 'Today’s visits' },
+      new: { ar: 'بانتظار التأكيد', en: 'Awaiting confirmation' },
+      upcoming: { ar: 'مؤكدة قادمة', en: 'Confirmed upcoming' },
+      total: { ar: 'كل الحجوزات', en: 'All bookings' },
+    },
+    filters: {
+      title: { ar: 'تصفية الحجوزات', en: 'Filter bookings' },
+      search: { ar: 'بحث', en: 'Search' },
+      searchPlaceholder: { ar: 'الاسم أو رقم الجوال', en: 'Name or mobile number' },
+      status: { ar: 'الحالة', en: 'Status' },
+      allStatuses: { ar: 'الكل', en: 'All' },
+      service: { ar: 'الخدمة', en: 'Treatment' },
+      allServices: { ar: 'كل الخدمات', en: 'All treatments' },
+      period: { ar: 'الفترة', en: 'Period' },
+      periods: {
+        upcoming: { ar: 'المواعيد القادمة', en: 'Upcoming' },
+        today: { ar: 'اليوم', en: 'Today' },
+        past: { ar: 'المواعيد السابقة', en: 'Past' },
+        all: { ar: 'كل التواريخ', en: 'All dates' },
+      },
+      clear: { ar: 'إزالة التصفية', en: 'Clear filters' },
+    },
+    statuses: {
+      new: { ar: 'جديد', en: 'New' },
+      confirmed: { ar: 'مؤكد', en: 'Confirmed' },
+      done: { ar: 'تمّت الزيارة', en: 'Visited' },
+      cancelled: { ar: 'ملغي', en: 'Cancelled' },
+    },
+    actions: {
+      confirm: { ar: 'تأكيد الموعد', en: 'Confirm' },
+      done: { ar: 'تمّت الزيارة', en: 'Mark visited' },
+      cancel: { ar: 'إلغاء الموعد', en: 'Cancel booking' },
+      restore: { ar: 'إرجاع إلى «جديد»', en: 'Move back to New' },
+      whatsapp: { ar: 'مراسلة على واتساب', en: 'Message on WhatsApp' },
+    },
+    received: { ar: 'وقت الاستلام', en: 'Received' },
+    resultsCount: { ar: 'عدد الحجوزات الظاهرة: {count}', en: 'Bookings shown: {count}' },
+    empty: {
+      title: { ar: 'لا توجد حجوزات بعد', en: 'No bookings yet' },
+      text: {
+        ar: 'ستظهر الحجوزات هنا فور إرسالها من الموقع.',
+        en: 'Bookings will appear here as soon as they are sent from the site.',
+      },
+    },
+    emptyFiltered: { ar: 'لا توجد حجوزات تطابق التصفية.', en: 'No bookings match these filters.' },
+    loadError: {
+      ar: 'تعذّر تحميل الحجوزات. تحقق من الاتصال ثم حدّث الصفحة.',
+      en: 'Could not load bookings. Check your connection and refresh the page.',
+    },
+    updateError: { ar: 'تعذّر حفظ التغيير. حاول مجددًا.', en: 'Could not save the change. Please try again.' },
+    whatsappReply: {
+      ar: 'مرحبًا {name}، معك عيادة لُمعة بخصوص موعدك يوم {date} الساعة {time}.',
+      en: 'Hello {name}, this is Lumaa clinic about your visit on {date} at {time}.',
+    },
   },
 }

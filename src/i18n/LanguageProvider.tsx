@@ -7,7 +7,14 @@ import { LANG_STORAGE_KEY, LanguageContext } from './LanguageContext'
  * مزوّد اللغة: يحفظ اللغة الحالية، ويغيّر اتجاه الصفحة (rtl / ltr)
  * وعنوانها، ويحفظ اختيار الزائر في المتصفح.
  */
-export function LanguageProvider({ children }: { children: ReactNode }) {
+export function LanguageProvider({
+  children,
+  title = site.meta.title,
+}: {
+  children: ReactNode
+  /** عنوان التبويب في المتصفح (لوحة الإدارة ترسل عنوانها الخاص) */
+  title?: Localized
+}) {
   // السكربت الصغير في index.html يضع اللغة المحفوظة على <html> قبل تحميل React،
   // لذلك نقرأها من هناك ليبدأ الموقع باللغة الصحيحة بدون وميض.
   const [lang, setLang] = useState<Lang>(() =>
@@ -19,13 +26,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const html = document.documentElement
     html.lang = lang
     html.dir = dir
-    document.title = site.meta.title[lang]
+    document.title = title[lang]
     try {
       localStorage.setItem(LANG_STORAGE_KEY, lang)
     } catch {
       // بعض المتصفحات تمنع التخزين (مثل التصفح الخاص)، والموقع يعمل بدونه
     }
-  }, [lang, dir])
+  }, [lang, dir, title])
 
   const toggleLang = useCallback(() => setLang((current) => (current === 'ar' ? 'en' : 'ar')), [])
   const t = useCallback(<T,>(value: Localized<T>): T => value[lang], [lang])

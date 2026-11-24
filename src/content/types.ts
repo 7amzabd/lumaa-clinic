@@ -140,6 +140,15 @@ export interface FieldText {
   hint?: Localized
 }
 
+/** حالة الحجز في لوحة الإدارة: جديد ← مؤكد ← تمّت الزيارة، أو ملغي */
+export type BookingStatus = 'new' | 'confirmed' | 'done' | 'cancelled'
+
+/** أسباب فشل تسجيل دخول الإدارة */
+export type SignInErrorKey = 'empty' | 'wrong' | 'tooMany' | 'network' | 'unknown'
+
+/** الفترة الزمنية في تصفية الحجوزات */
+export type BookingPeriod = 'upcoming' | 'today' | 'past' | 'all'
+
 /** أسماء رسائل الخطأ في نموذج الحجز */
 export type BookingErrorKey =
   | 'nameRequired'
@@ -275,6 +284,8 @@ export interface SiteContent {
     /** أيام الإغلاق: 0 = الأحد ... 5 = الجمعة، 6 = السبت */
     closedDays: number[]
     submit: Localized
+    /** سطر صغير تحت زر الإرسال، يظهر فقط عند ربط Firebase (لأن الحجز يُحفظ) */
+    privacyNote: Localized
     errorSummary: Localized
     errors: Record<BookingErrorKey, Localized>
     whatsappMessage: {
@@ -318,5 +329,55 @@ export interface SiteContent {
     creditHandle: string
     creditHref: string
     rights: Localized
+  }
+  /** نصوص لوحة الإدارة (صفحة ‎/admin) */
+  admin: {
+    pageTitle: Localized
+    title: Localized
+    bookingsTitle: Localized
+    backToSite: Localized
+    signOut: Localized
+    loading: Localized
+    notConfigured: { title: Localized; text: Localized }
+    login: {
+      title: Localized
+      intro: Localized
+      email: Localized
+      password: Localized
+      submit: Localized
+      submitting: Localized
+      errors: Record<SignInErrorKey, Localized>
+    }
+    notAllowed: { title: Localized; text: Localized; uidLabel: Localized }
+    stats: { today: Localized; new: Localized; upcoming: Localized; total: Localized }
+    filters: {
+      title: Localized
+      search: Localized
+      searchPlaceholder: Localized
+      status: Localized
+      allStatuses: Localized
+      service: Localized
+      allServices: Localized
+      period: Localized
+      periods: Record<BookingPeriod, Localized>
+      clear: Localized
+    }
+    statuses: Record<BookingStatus, Localized>
+    actions: {
+      confirm: Localized
+      done: Localized
+      cancel: Localized
+      restore: Localized
+      whatsapp: Localized
+    }
+    received: Localized
+    /** "{count}" يُستبدل بعدد الحجوزات الظاهرة */
+    resultsCount: Localized
+    empty: { title: Localized; text: Localized }
+    emptyFiltered: Localized
+    loadError: Localized
+    updateError: Localized
+    /** رسالة واتساب الجاهزة للعميلة: {name} و {date} و {time} تُستبدل تلقائيًا */
+    whatsappReply: Localized
   }
 }

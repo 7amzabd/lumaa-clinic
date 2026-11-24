@@ -5,11 +5,14 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:emulator": "vite --mode emulator",
+    "emulators": "npx --yes firebase-tools emulators:start --only auth,firestore --project demo-lumaa",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"
   },
   "dependencies": {
+    "firebase": "^13.4.0",
     "motion": "^14.9.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"

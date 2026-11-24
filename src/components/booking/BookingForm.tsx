@@ -1,5 +1,7 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
 import { site } from '../../content/site'
+import { firebaseEnabled } from '../../firebase/config'
+import { preloadBookingStore, saveBooking } from '../../firebase/saveBooking'
 import { useLang } from '../../i18n/useLang'
 import { describedBy, inputClass } from '../../lib/form'
 import { formatPrice, formatTime, todayIso } from '../../lib/format'
@@ -48,6 +50,11 @@ export function BookingForm({ onSubmitted, onDraftChange }: BookingFormProps) {
     onDraftChange({ date: fields.date, time: fields.time })
   }, [fields.date, fields.time, onDraftChange])
 
+  // عند اختيار التاريخ نحمّل مكتبة الحفظ مبكرًا، فيُحفظ الحجز فور الضغط على «أرسل»
+  useEffect(() => {
+    if (fields.date) preloadBookingStore()
+  }, [fields.date])
+
   const today = todayIso()
   const values: BookingValues = { ...fields, service: serviceId }
   const errors = attempted ? validateBooking(values) : {}
@@ -92,7 +99,11 @@ export function BookingForm({ onSubmitted, onDraftChange }: BookingFormProps) {
       return
     }
 
-    // كل شيء صحيح: نفتح واتساب برسالة جاهزة، ثم نعرض رسالة التأكيد
+    // كل شيء صحيح: نحفظ الحجز للوحة الإدارة (إذا رُبط Firebase) دون انتظار،
+    // لأن المتصفح يسمح بفتح نافذة واتساب فقط لحظة الضغط نفسها
+    void saveBooking(values, lang)
+
+    // ثم نفتح واتساب برسالة جاهزة، ونعرض رسالة التأكيد
     const link = whatsappUrl(buildBookingMessage(values, lang))
     window.open(link, '_blank', 'noopener,noreferrer')
     onSubmitted(values, link)
@@ -243,6 +254,7 @@ export function BookingForm({ onSubmitted, onDraftChange }: BookingFormProps) {
             id="booking-name"
             type="text"
             autoComplete="name"
+            maxLength={80}
             value={fields.name}
             onChange={update('name')}
             placeholder={labels.name.placeholder && t(labels.name.placeholder)}
@@ -292,6 +304,8 @@ export function BookingForm({ onSubmitted, onDraftChange }: BookingFormProps) {
             <IconWhatsapp className="size-5" />
             {t(booking.submit)}
           </Button>
+          {/* يظهر فقط عند ربط Firebase، لأن الحجز حينها يُحفظ في قاعدة البيانات */}
+          {firebaseEnabled && <p className="mt-3 text-xs text-ink-soft">{t(booking.privacyNote)}</p>}
         </div>
       </div>
     </form>

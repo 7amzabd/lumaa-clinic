@@ -1,0 +1,51 @@
+rules_version = '2';
+
+// ==============================================================
+// قواعد أمان Firestore: هي الحماية الحقيقية لبيانات الحجوزات.
+//   - الزائر: يضيف حجزًا جديدًا فقط، ولا يقرأ أي حجز.
+//   - المدير: يقرأ الحجوزات ويغيّر حالتها فقط.
+//   - المدير هو من له مستند في مجموعة admins باسم معرّف حسابه (UID).
+//     تضيفه يدويًا من Firebase Console، ولا يمكن إضافته من الموقع.
+// بعد أي تعديل هنا انشر القواعد:  npx firebase-tools deploy --only firestore:rules
+// ==============================================================
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // الحقول نفسها التي يرسلها src/firebase/saveBooking.ts
+    // (نمط رقم الجوال مكرر في src/lib/validation.ts، غيّرهما معًا)
+    // (كلمة service محجوزة في لغة القواعد، لذلك نكتبها data['service'])
+    function isValidNewBooking(data) {
+      return data.keys().hasOnly(['name', 'phone', 'service', 'date', 'time', 'notes', 'lang', 'status', 'createdAt'])
+        && data.keys().hasAll(['name', 'phone', 'service', 'date', 'time', 'notes', 'lang', 'status', 'createdAt'])
+        && data.name is string && data.name.size() >= 2 && data.name.size() <= 80
+        && data.phone is string && data.phone.matches('^([+]?966|0)5[0-9]{8}$')
+        && data['service'] is string && data['service'].size() >= 1 && data['service'].size() <= 40
+        && data.date is string && data.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && data.time is string && data.time.matches('^[0-9]{2}:[0-9]{2}$')
+        && data.notes is string && data.notes.size() <= 300
+        && data.lang in ['ar', 'en']
+        && data.status == 'new'
+        && data.createdAt == request.time;
+    }
+
+    match /bookings/{bookingId} {
+      allow create: if isValidNewBooking(request.resource.data);
+      allow read: if isAdmin();
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+        && request.resource.data.status in ['new', 'confirmed', 'done', 'cancelled'];
+      allow delete: if false;
+    }
+
+    // كل حساب يقرأ مستنده فقط (ليعرف الموقع أنه مدير). الكتابة من Firebase Console فقط
+    match /admins/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+  }
+}

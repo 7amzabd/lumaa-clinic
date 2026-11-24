@@ -5,6 +5,7 @@ import { useActiveSection } from '../../hooks/useActiveSection'
 import { useLang } from '../../i18n/useLang'
 import { LinkButton } from '../ui/Button'
 import { IconClose, IconMenu } from '../ui/Icons'
+import { LangToggle } from '../ui/LangToggle'
 import { Logo } from '../ui/Logo'
 import { ThemeToggle } from '../ui/ThemeToggle'
 import { MobileMenu } from './MobileMenu'
@@ -14,7 +15,7 @@ const SECTION_IDS = ['top', ...site.nav.map((link) => link.id), 'booking']
 
 /** الشريط العلوي الثابت: الشعار، الروابط، زر اللغة، زر الحجز */
 export function Header() {
-  const { t, lang, toggleLang } = useLang()
+  const { t } = useLang()
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
@@ -67,16 +68,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* زر تبديل اللغة */}
-          <button
-            type="button"
-            onClick={toggleLang}
-            title={t(site.ui.switchLanguage)}
-            className="inline-flex h-10 min-w-11 items-center justify-center rounded-full border border-ink/15 px-3 text-sm font-medium transition-colors duration-300 hover:border-gold hover:text-gold-deep"
-          >
-            <span lang={lang === 'ar' ? 'en' : 'ar'}>{t(site.ui.languageToggle)}</span>
-            <span className="sr-only">{t(site.ui.switchLanguage)}</span>
-          </button>
+          <LangToggle />
 
           {/* في الجوال ينتقل زر الوضع إلى داخل القائمة، حتى يتسع الشريط للأزرار الأساسية */}
           <div className="max-sm:hidden">

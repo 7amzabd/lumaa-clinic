@@ -35,6 +35,17 @@ export function formatDate(isoDate: string, lang: Lang) {
   }).format(parseLocalDate(isoDate))
 }
 
+/** تاريخ ووقت مختصران، لوقت استلام الحجز في لوحة الإدارة: "8 نوفمبر، 4:05 م" */
+export function formatDateTime(date: Date, lang: Lang) {
+  return new Intl.DateTimeFormat(site.locale[lang], {
+    day: 'numeric',
+    month: 'short',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }).format(date)
+}
+
 /** يحوّل "YYYY-MM-DD" إلى تاريخ محلي (بدون مشاكل فرق التوقيت) */
 export function parseLocalDate(isoDate: string) {
   const [year, month, day] = isoDate.split('-').map(Number)
